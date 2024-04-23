@@ -5,10 +5,10 @@ import { dbClient, storageClient } from '@/firebase/client';
 import { blobToAudioBuffer } from '@/utils';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage';
-import { FolderClosed, FolderOpen } from 'lucide-react';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { Record, RecordParams } from '../../schema';
 
+import MngFormContainer from '@/components/MngFormContainer';
 import { deleteAllRecords } from '../../services/actions';
 import { deleteFiles, updateRecordParams } from '../../services/client';
 import RecordMngFormRow from './RecordMngFormRow';
@@ -21,11 +21,17 @@ type FormProps = {
   records: (Record & { audioBuffer: undefined | AudioBuffer })[];
 };
 
-const INITIAL_STATE: FormProps = { title: '', pitchStr: '', records: [] };
+const INITIAL_STATE: FormProps = {
+  title: '',
+  pitchStr: '',
+  records: [],
+};
 
 const RecordMngForm = ({ params }: Props) => {
-  const [open, setOpen] = useState(false);
   const [value, setValue] = useState(INITIAL_STATE);
+  // const [records, setRecords] = useState<
+  //   (Record & { audioBuffer: undefined | AudioBuffer })[]
+  // >([]);
 
   const isDuplicated = useMemo(
     () =>
@@ -40,13 +46,13 @@ const RecordMngForm = ({ params }: Props) => {
   }, [params]);
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(dbClient, 'records'), (docs) => {
+    const unsub = onSnapshot(collection(dbClient, 'records'), async (docs) => {
       if (docs.empty) {
         setValue((prev) => ({ ...prev, records: [] }));
         return;
       }
 
-      const records: (Record & { audioBuffer: undefined | AudioBuffer })[] = [];
+      let records: (Record & { audioBuffer: undefined | AudioBuffer })[] = [];
 
       docs.forEach(async (doc) => {
         const { path, title, pitchStr, created_at } = doc.data();
@@ -59,26 +65,28 @@ const RecordMngForm = ({ params }: Props) => {
           created_at,
           audioBuffer: undefined,
         };
+        records.push(record);
+      });
 
-        try {
-          const url = await getDownloadURL(ref(storageClient, path));
+      records = await Promise.all(
+        records.map(async (record) => {
+          const url = await getDownloadURL(ref(storageClient, record.path));
           const response = await fetch(url);
           const blob = await response.blob();
           const audioBuffer = await blobToAudioBuffer(blob);
           if (audioBuffer) {
             record.audioBuffer = audioBuffer;
           }
-        } catch (e) {
-          console.log(e);
-        }
+          return record;
+        })
+      );
 
-        records.push(record);
-      });
+      records.sort((a, b) => a.created_at - b.created_at);
       setValue((prev) => ({ ...prev, records }));
     });
 
     return () => unsub();
-  }, []);
+  }, [params]);
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue: FormProps = { ...value, title: e.target.value };
@@ -117,39 +125,35 @@ const RecordMngForm = ({ params }: Props) => {
   };
 
   return (
-    <div className='grid gap-4'>
-      <div className='flex items-center'>
-        <Button
-          size='icon'
-          variant='ghost'
-          onClick={() => setOpen((prev) => !prev)}
-        >
-          {open ? <FolderOpen /> : <FolderClosed />}
-        </Button>
-        <div className='text-xs font-extrabold'>Record</div>
+    <MngFormContainer label='Record'>
+      <div className='grid gap-1'>
+        <Input
+          value={value.title}
+          onChange={handleChangeTitle}
+          placeholder='title'
+        />
+        {isDuplicated ? (
+          <div className='text-xs text-red-500'>
+            {`既存の「/anon/${value.title}.mp3」を上書きします`}
+          </div>
+        ) : null}
       </div>
-      {open ? (
-        <div className='grid gap-4'>
-          <div className='grid gap-1'>
-            <Input value={value.title} onChange={handleChangeTitle} />
-            {isDuplicated ? (
-              <div className='text-xs text-red-500'>
-                {`既存の「/anon/${value.title}.mp3」を上書きします`}
-              </div>
-            ) : null}
-          </div>
-          <Input value={value.pitchStr} onChange={handleChangePitchStr} />
-          <form action={action} className='grid'>
-            <Button type='submit'>Clear All Records</Button>
-          </form>
-          <div className='grid gap-2'>
-            {value.records.map((record, index) => (
-              <RecordMngFormRow key={index} record={record} />
-            ))}
-          </div>
+      <Input
+        value={value.pitchStr}
+        onChange={handleChangePitchStr}
+        placeholder='pitchStr'
+      />
+      <form action={action} className='grid'>
+        <Button type='submit'>Clear All Records</Button>
+      </form>
+      {value.records.length ? (
+        <div className='grid gap-2'>
+          {value.records.map((record, index) => (
+            <RecordMngFormRow key={index} record={record} />
+          ))}
         </div>
       ) : null}
-    </div>
+    </MngFormContainer>
   );
 };
 

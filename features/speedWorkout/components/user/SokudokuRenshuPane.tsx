@@ -93,7 +93,7 @@ const SokudokuRenshuPane = ({ speedWorkouts }: Props) => {
                 variant='ghost'
                 className='h-[120px] w-[120px]'
               >
-                <PlayCircle size={120} color='#52a2aa' />
+                <PlayCircle size={120} />
               </Button>
             </form>
           ) : (
@@ -104,7 +104,7 @@ const SokudokuRenshuPane = ({ speedWorkouts }: Props) => {
                 variant='ghost'
                 className='h-[120px] w-[120px]'
               >
-                <X size={120} color='#52a2aa' />
+                <X size={120} />
               </Button>
             </form>
           )}

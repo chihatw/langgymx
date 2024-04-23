@@ -14,7 +14,7 @@ const NextButton = ({ handleNextRound }: Props) => {
         className='h-24 w-24'
         onClick={handleNextRound}
       >
-        <RefreshCcw color='#52a2aa' size={96} />
+        <RefreshCcw size={96} />
       </Button>
     </div>
   );

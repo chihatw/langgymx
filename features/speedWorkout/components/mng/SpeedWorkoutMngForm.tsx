@@ -2,9 +2,10 @@
 
 import { Button, buttonVariants } from '@/components/ui/button';
 
+import MngFormContainer from '@/components/MngFormContainer';
 import SentencePitchLine from '@/features/pitchLine/components/SentencePitchLine';
 import { cn } from '@/lib/utils';
-import { Check, Edit2, FolderClosed, FolderOpen, Trash2 } from 'lucide-react';
+import { Check, Edit2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useMemo, useOptimistic, useState } from 'react';
 import { SpeedWorkout, SpeedWorkoutParams } from '../../schema';
@@ -20,7 +21,6 @@ type Props = {
 };
 
 const SpeedWorkoutMngForm = ({ params, workouts }: Props) => {
-  const [open, setOpen] = useState(false);
   const [optimisticWorkous, removeWorkout] = useOptimistic<
     SpeedWorkout[],
     string
@@ -55,75 +55,59 @@ const SpeedWorkoutMngForm = ({ params, workouts }: Props) => {
   };
 
   return (
-    <div className='grid gap-y-4'>
-      <div className='flex items-center'>
-        <Button
-          size='icon'
-          variant='ghost'
-          onClick={() => setOpen((prev) => !prev)}
+    <MngFormContainer label='Speed Workout'>
+      <div>
+        <Link
+          href={'/speedWorkout/new'}
+          className={cn(buttonVariants(), 'w-full')}
         >
-          {open ? <FolderOpen /> : <FolderClosed />}
-        </Button>
-        <div className='text-xs font-extrabold'>Speed Workout</div>
+          create new workout
+        </Link>
       </div>
-      {open ? (
-        <>
-          <div>
+      <div>
+        <form action={handleReset}>
+          <Button className='w-full' variant={'outline'} type='submit'>
+            reset
+          </Button>
+        </form>
+      </div>
+      <div>
+        {optimisticWorkous.map((item, index) => (
+          <div
+            key={index}
+            className='grid grid-cols-[auto,1fr,auto,auto] items-center gap-x-2 bg-white/60 rounded'
+          >
+            <form action={() => handleSelect(item.id)}>
+              <Button size='icon' variant='ghost' type='submit'>
+                <Check className={value === item.id ? 'text-[#52a2aa]' : ''} />
+              </Button>
+            </form>
+            <div>{item.label}</div>
             <Link
-              href={'/speedWorkout/new'}
-              className={cn(buttonVariants(), 'w-full')}
+              href={`/speedWorkout/${item.id}`}
+              className={buttonVariants({ variant: 'ghost', size: 'icon' })}
             >
-              create new workout
+              <Edit2 />
             </Link>
-          </div>
-          <div>
-            <form action={handleReset}>
-              <Button className='w-full' variant={'outline'} type='submit'>
-                reset
+            <form action={() => action(item.id)}>
+              <Button variant={'ghost'} size='icon' type='submit'>
+                <Trash2 />
               </Button>
             </form>
           </div>
-          <div>
-            {optimisticWorkous.map((item, index) => (
-              <div
-                key={index}
-                className='grid grid-cols-[auto,1fr,auto,auto] items-center gap-x-2'
-              >
-                <form action={() => handleSelect(item.id)}>
-                  <Button size='icon' variant='ghost' type='submit'>
-                    <Check
-                      className={value === item.id ? 'text-[#52a2aa]' : ''}
-                    />
-                  </Button>
-                </form>
-                <div>{item.label}</div>
-                <Link
-                  href={`/speedWorkout/${item.id}`}
-                  className={buttonVariants({ variant: 'ghost', size: 'icon' })}
-                >
-                  <Edit2 />
-                </Link>
-                <form action={() => action(item.id)}>
-                  <Button variant={'ghost'} size='icon' type='submit'>
-                    <Trash2 />
-                  </Button>
-                </form>
-              </div>
-            ))}
-          </div>
-          {selectedWorkout ? (
-            <div className='space-y-4 px-4'>
-              {selectedWorkout.items.map((item, index) => (
-                <div key={index} className='rounded bg-white/40 p-2'>
-                  <div className='text-xs text-[#52a2aa]'>{item.cue}</div>
-                  <SentencePitchLine pitchStr={item.pitchStr} />
-                </div>
-              ))}
+        ))}
+      </div>
+      {selectedWorkout ? (
+        <div className='grid gap-2 px-4'>
+          {selectedWorkout.items.map((item, index) => (
+            <div key={index} className='rounded bg-white/40 p-2'>
+              <div className='text-xs '>{item.cue}</div>
+              <SentencePitchLine pitchStr={item.pitchStr} />
             </div>
-          ) : null}
-        </>
+          ))}
+        </div>
       ) : null}
-    </div>
+    </MngFormContainer>
   );
 };
 

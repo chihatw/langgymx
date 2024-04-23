@@ -16,7 +16,7 @@ const PatternSwitches = ({
   setCurrentCue,
 }: Props) => {
   return (
-    <div className='space-y-4'>
+    <div className='grid gap-2 rounded bg-white/60 p-2'>
       <div className='flex items-center gap-4'>
         <div className='select-none text-sm'>主題</div>
         <PaperCupCheckbox

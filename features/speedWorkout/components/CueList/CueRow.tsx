@@ -13,7 +13,7 @@ const CueRow = ({ isActive, handleClick, isChecked, cue }: Props) => {
   return (
     <div
       className={cn(
-        isChecked && !isActive ? 'bg-black/10' : isActive ? 'bg-yellow-50' : '',
+        isChecked && !isActive ? 'bg-black/10' : isActive ? 'bg-slate-100' : '',
         'rounded-lg'
       )}
     >
@@ -26,7 +26,7 @@ const CueRow = ({ isActive, handleClick, isChecked, cue }: Props) => {
         >
           <div className='grid flex-1 items-center gap-1'>
             <div className='grid grid-cols-[1fr,auto] items-center'>
-              <div className=' text-[#52a2aa]'>{cue}</div>
+              <div>{cue}</div>
               {isChecked ? <Check className='text-[#52a2aa]' /> : null}
             </div>
           </div>

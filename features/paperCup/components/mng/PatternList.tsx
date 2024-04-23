@@ -8,7 +8,7 @@ type Props = {
 
 const PatternList = ({ params }: Props) => {
   return (
-    <div className='mb-10'>
+    <div className='rounded bg-white/60'>
       <div className='grid grid-cols-8 py-2'>
         <div />
         <div className='col-span-3 flex items-center justify-center text-sm'>

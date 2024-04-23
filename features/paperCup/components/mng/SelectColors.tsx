@@ -41,7 +41,7 @@ const SelectColors = ({
     updatePapercupPatternParams(updated);
   };
   return (
-    <div className='flex'>
+    <div className='flex bg-white/60 rounded'>
       {COLORS.map((color, index) => (
         <form key={index} action={() => handleClickColor(color)}>
           <Button

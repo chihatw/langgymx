@@ -1,11 +1,10 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import MngFormContainer from '@/components/MngFormContainer';
 import { Input } from '@/components/ui/input';
 import SentencePitchLine from '@/features/pitchLine/components/SentencePitchLine';
 import { dbClient } from '@/firebase/client';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { FolderClosed, FolderOpen } from 'lucide-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { updatePitches } from '../../services/client';
 
@@ -29,8 +28,6 @@ const INITIAL_STATE: FormProps = {
 };
 
 const PitchesMngForm = ({ pitches }: Props) => {
-  const [open, setOpen] = useState(false);
-
   const [value, setValue] = useState({
     ...INITIAL_STATE,
     ...pitches,
@@ -65,33 +62,21 @@ const PitchesMngForm = ({ pitches }: Props) => {
   };
 
   return (
-    <div className='grid gap-4'>
-      <div className='flex items-center'>
-        <Button
-          size='icon'
-          variant='ghost'
-          onClick={() => setOpen((prev) => !prev)}
-        >
-          {open ? <FolderOpen /> : <FolderClosed />}
-        </Button>
-        <div className='text-xs font-extrabold'>Pitches</div>
-      </div>
-      {open ? (
-        <div className='grid gap-4'>
-          <Input
-            placeholder='japanese'
-            value={value.japanese}
-            onChange={handleChangeJapanese}
-          />
-          <Input
-            placeholder='pitchStr'
-            value={value.pitchStr}
-            onChange={handleChangePitchStr}
-          />
-          <SentencePitchLine pitchStr={value.pitchStr_user} />
-        </div>
+    <MngFormContainer label='Pitches'>
+      <Input
+        placeholder='japanese'
+        value={value.japanese}
+        onChange={handleChangeJapanese}
+      />
+      <Input
+        placeholder='pitchStr'
+        value={value.pitchStr}
+        onChange={handleChangePitchStr}
+      />
+      {!!value.pitchStr_user ? (
+        <SentencePitchLine pitchStr={value.pitchStr_user} />
       ) : null}
-    </div>
+    </MngFormContainer>
   );
 };
 

@@ -52,7 +52,7 @@ const GaWoNiPane = (props: Props) => {
   };
 
   return (
-    <div className='mx-auto max-w-sm space-y-20 pt-20'>
+    <div className='mx-auto max-w-sm grid gap-16 pt-4'>
       <div className='grid h-60 gap-4'>
         {cue
           .split('　')
@@ -90,7 +90,7 @@ const GaWoNiPane = (props: Props) => {
           className='h-32 w-32'
           type='submit'
         >
-          <RefreshCw size={80} color='#52a2aa' />
+          <RefreshCw size={96} />
         </Button>
       </form>
     </div>

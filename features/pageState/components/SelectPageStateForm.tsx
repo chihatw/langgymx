@@ -21,7 +21,7 @@ const SelectPageStateForm = ({ pageState, user }: Props) => {
   };
 
   return (
-    <div className='space-y-2'>
+    <div className='grid gap-2 p-2 pt-1 pb-3 rounded bg-white/60'>
       <div className='font-extrabold text-xs'>{user}</div>
       <form>
         <RadioGroup

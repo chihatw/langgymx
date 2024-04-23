@@ -111,7 +111,7 @@ const SpeedWorkoutForm = ({ workout }: Props) => {
               >
                 <div className='text-xs'>{Math.ceil(index / 2)}</div>
                 <div>
-                  <div className='text-[#52a2aa] text-xs'>{cue}</div>
+                  <div className='text-xs'>{cue}</div>
                   <div key={index}>
                     <SentencePitchLine pitchStr={line} />
                   </div>

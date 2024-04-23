@@ -35,7 +35,7 @@ const MngHomePane = async (props: Props) => {
   const pitches = await fetchPiches();
 
   return (
-    <div className='max-w-2xl mx-auto pt-10'>
+    <div className='max-w-xl mx-auto pt-10'>
       <div className='space-y-4 px-4'>
         <SelectPageState />
         <NoteMngForm note={note} />

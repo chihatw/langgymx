@@ -1,4 +1,5 @@
 'use client';
+import BetterreadPane from '@/features/betterread/components/BetterreadPane';
 import GaWoNiPane from '@/features/gawoni/components/user/GaWoNiPane';
 import NotePane from '@/features/note/components/user/NotePane';
 import PaperCupPane from '@/features/paperCup/components/user/PaperCupPane';
@@ -44,6 +45,8 @@ const PageSwitch = ({ user, speedWorkouts }: Props) => {
       return <NotePane />;
     case 'pitches':
       return <PitchesPane />;
+    case 'betterread':
+      return <BetterreadPane user={user} />;
     case 'blank':
       return <></>;
     default:

@@ -13,4 +13,5 @@ export const PAGES: { [key: string]: string } = {
   sokudokuRenshu: '速読練習',
   sokudokuSolo: '速読ソロ',
   pitches: 'ピッチ',
+  betterread: '課前準備',
 };
